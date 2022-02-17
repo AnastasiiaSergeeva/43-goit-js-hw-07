@@ -31,29 +31,28 @@ const galleryMarkup = galleryItems.map(item =>
 galleryRef.insertAdjacentHTML(`beforeend`, galleryMarkup);
 galleryRef.addEventListener(`click`, onGalleryClick);
 
- function onGalleryClick (event) {
-   event.preventDefault();
+function onGalleryClick(event) {
+  event.preventDefault();
 
-   if(!event.target.classList.contains(`gallery__image`)) {
-     return;
-   }
-   makeModal(event);
-   }
-   
-  function makeModal(event) {
-    const instance = basicLightbox.create(`
-       <img src="${event.target.dataset.source}"width="800" height="600"> `);
+  if (!event.target.classList.contains(`gallery__image`)) {
+    return;
+  }
+  
+  const instance = basicLightbox.create(`
+       <img src="${event.target.dataset.source}"width="800" height="600"> `, {
+    onClose: () => {
+      window.removeEventListener(`keydown`, onEscClick);
+    }
+     
+  });
       
-      instance.show();
+  instance.show();
       
- galleryRef.addEventListener(`keydown`, onEscClick);
- function onEscClick(event) {
-         if(!(event.code === `Escape`)) {
-           return;
-         }
-         if(event.code === `Escape`) {
-           instance.close();
-           galleryContainer.removeEventListener(`keydown`, onEscClick);
-         }
-       }
-     }
+  window.addEventListener(`keydown`, onEscClick);
+    
+  function onEscClick(event) {
+    if (event.code === `Escape`) {
+      instance.close();
+    }
+  }
+}
